@@ -37,7 +37,7 @@ class PIR(IPIR):
 
         _F = self.poly_int(zip(self._p, _F_p))
 
-        return _F[-1]
+        return _F[-1].f
 
     def _g(self, id: int, r: int, z: FElement) -> FElement:
         return self._r[l] * z + chi(id)(l)
