@@ -10,18 +10,19 @@ class IDatabase(ABC):
 
     @abstractmethod
     def __iter__(self) -> Iterator:
-    	pass
+        pass
 
     @abstractmethod
     def __len__(self) -> int:
-    	pass
+        pass
 
     @abstractmethod
     def pad(self, padding: int) -> None:
-    	pass
+        pass
+
 
 class IPIR(ABC):
-	
-	@abstractmethod
-	def __call__(self, id: int) -> int:
-		pass 
+
+    @abstractmethod
+    def __call__(self, id: int) -> int:
+        pass
