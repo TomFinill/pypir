@@ -1,8 +1,10 @@
 from pypir.poly_int_pir import IReplica, chi
 from pypir.pir import IDatabase
 from typing import Sequence
-from pyfinite import FElement
+from pyfinite.ffield import FElement
 from operator import mul
+from math import ceil, log
+
 
 
 class Replica(IReplica):
@@ -24,6 +26,6 @@ class Replica(IReplica):
 
     @classmethod
     def create_required(cls, db: IDatabase) -> Sequence[IReplica]:
-        s = math.ciel(math.log(len(db), 2))
+        s = ceil(log(len(db), 2))
         db.pad((2 ** s) - len(db))
-        return [cls(db) for _ in range s + 1]
+        return [cls(db) for _ in range(s + 1)]

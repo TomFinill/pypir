@@ -1,10 +1,9 @@
 from pypir.pir import IPIR
 from abc import ABC, abstractmethod
-from typing import Collection, Callable, Sequence, Generator
+from typing import Collection, Callable, Sequence, Generator, Tuple
 from random import choice
 from itertools import islice
-from pyfinite import FField, FElement
-
+from pyfinite.ffield import FField, FElement
 
 class IReplica(ABC):
     @abstractmethod
@@ -23,16 +22,32 @@ class PIR(IPIR):
         self.field = field
         self.replicas = replicas
         self._s = len(self._replicas) - 1
-        self._r = [self.field.GetRandomElement() for _ in range(self._s)]
-        self._p = [*range(1, self._s + 2)]
+        self._r = [
+            FElement(self.field, self.field.GetRandomElement())
+            for _ in range(self._s)
+        ]
+        self._p = [
+            FElement(self.field, element) for element in range(1, self._s + 2)
+        ]
 
     def __call__(self, id: int) -> int:
-        for replica, g in zip(self.replicas, self.build_g()):
-            replica(*g)
+        _F_p = []
+        for replica, g in zip(self.replicas, self.gen_g()):
+            _F_p.append(replica(*g))
+
+        _F = self.poly_int(zip(self._p, _F_p))
+
+        return _F[-1]
 
     def _g(self, id: int, r: int, z: FElement) -> FElement:
         return self._r[l] * z + chi(id)(l)
 
-    def build_g(self, id: int) -> Generator[Sequence[FElement]]
+    def gen_g(self, id: int) -> Iterator[Sequence[FElement]]:
         for z in self._p:
             yield tuple(self._g(id, l, z) for l in range(self._s))
+
+    def poly_int(
+    	self, elements: Sequence[Tuple[FElement, FElement]]
+    ) -> Sequence[FElement]:
+    	# TODO: Implement Lagrange polynomial interpolation
+    	raise NotImplementedError()
